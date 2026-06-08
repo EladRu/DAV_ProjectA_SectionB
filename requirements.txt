@@ -1,3 +1,17 @@
-numpy>=1.24
-sentence-transformers>=2.2.0
-faiss-cpu>=1.7.4
+# PyTorch CUDA 12.1 build — matches the grading VM's GPU and driver.
+# torch is fetched from the official PyTorch wheel index specified below.
+--extra-index-url https://download.pytorch.org/whl/cu121
+
+torch==2.5.1+cu121
+
+# Core numerics + lexical (BM25) retrieval
+numpy==2.2.6
+scipy==1.13.1
+faiss-cpu==1.14.2
+
+# Dense embeddings (all-MiniLM-L6-v2) + cross-encoder reranking,
+# with transitive deps pinned for a reproducible environment
+sentence-transformers==2.7.0
+transformers==4.41.2
+tokenizers==0.19.1
+safetensors==0.7.0
