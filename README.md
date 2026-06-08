@@ -34,9 +34,14 @@ scores.
 
 ## Result
 
-| Metric | Value |
+The numbers below are measured on the 50 **public** queries, which we used as a
+development set. Final grading is on a separate set of **hidden** queries, so the
+graded NDCG@10 will differ from this figure — we report the public-set result as
+an indication of the pipeline's performance.
+
+| Metric (public queries) | Value |
 | --- | --- |
-| Mean NDCG@10 (public queries) | **0.3066** |
+| Mean NDCG@10 | **0.3066** |
 | Query time, 50 queries (Tesla M60) | ≈ 50–55 s (within the 60 s budget) |
 
 ## Repository layout
