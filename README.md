@@ -1,34 +1,34 @@
-# Project A — Section B: Wikipedia Passage Retrieval
+# Project A - Section B: Wikipedia Passage Retrieval
 
 End-to-end retrieval over a ~27,000-page synthetic Wikipedia corpus. Given a
-natural-language query, `run()` returns the 10 most relevant page IDs. The
-system is evaluated by mean **NDCG@10** over a set of hidden queries, under a
-**60-second** budget for one batched call on the evaluation GPU (Tesla M60).
+natural-language query, run() returns the 10 most relevant page IDs. The system
+is evaluated by mean NDCG@10 over a set of hidden queries, under a 60-second
+budget for one batched call on the evaluation GPU (Tesla M60).
 
 ## Approach
 
-A three-stage pipeline, arrived at empirically — dense retrieval alone plateaued
-well below this configuration:
+A three-stage pipeline, arrived at empirically (dense retrieval alone plateaued
+well below this configuration):
 
-**1. Recall — hybrid candidate retrieval.** Two complementary retrievers are
+**1. Recall - hybrid candidate retrieval.** Two complementary retrievers are
 merged with Reciprocal Rank Fusion (RRF):
 
-- **Dense:** `sentence-transformers/all-MiniLM-L6-v2` embeddings over small,
-  sentence-aware chunks. Strong on paraphrase and meaning ("physicist" ≈
+- **Dense:** sentence-transformers/all-MiniLM-L6-v2 embeddings over small,
+  sentence-aware chunks. Strong on paraphrase and meaning ("physicist" vs.
   "scientist").
 - **Lexical:** chunk-level BM25. Strong on the exact rare tokens many queries
-  hinge on — specific numbers, years, and proper nouns — which dense embeddings
+  hinge on (specific numbers, years, and proper nouns) which dense embeddings
   tend to blur.
 
 The two have opposite blind spots, so fusing them lifts candidate recall above
-either alone (dense recall@100 ≈ 0.54; the fused pool ≈ 0.80).
+either alone (dense recall@100 ~0.54; the fused pool ~0.80).
 
 **2. Chunk selection.** Pages are long (median ~1,200 words), so each candidate
 page is reduced to a single passage: the chunk with the highest idf-weighted
 overlap with the query terms. This gives the reranker the most on-topic text
 instead of an arbitrary slice of a long page.
 
-**3. Precision — cross-encoder rerank.** `cross-encoder/ms-marco-MiniLM-L-12-v2`
+**3. Precision - cross-encoder rerank.** cross-encoder/ms-marco-MiniLM-L-12-v2
 scores each (query, chunk) pair, and the final page ranking is taken from those
 scores.
 
@@ -36,13 +36,13 @@ scores.
 
 The numbers below are measured on the 29 **public** queries (the de-duplicated
 development set). Final grading is on a separate set of **hidden** queries of
-similar format, so the graded NDCG@10 will differ — we report the public-set
+similar format, so the graded NDCG@10 will differ; we report the public-set
 result as an indication of the pipeline's performance.
 
 | Metric (public queries) | Value |
 | --- | --- |
 | Mean NDCG@10 | **0.4247** |
-| Query time, 29 queries (Tesla M60) | within the 60 s budget |
+| Query time, 29 queries (Tesla M60) | 30.90 s (within the 60 s budget) |
 
 ## Repository layout
 
@@ -66,8 +66,8 @@ data/public_queries.json  Public evaluation queries
 
 ## Setup
 
-The prebuilt index in `artifacts/` is stored with **Git LFS**, so Git LFS must
-be installed before cloning, or the large files will arrive as pointer stubs:
+The prebuilt index in artifacts/ is stored with **Git LFS**, so Git LFS must be
+installed before cloning, or the large files will arrive as pointer stubs:
 
 ```bash
 git lfs install
@@ -86,7 +86,7 @@ ls -lh artifacts/index_vectors.npy
 ## Running the evaluation (no rebuild required)
 
 The index is prebuilt and committed, so evaluation runs directly against the
-artifacts — no indexing step is needed:
+artifacts; no indexing step is needed:
 
 ```bash
 python scripts/eval_public.py
@@ -96,8 +96,11 @@ This prints the mean NDCG@10 over the public queries and the total query time.
 
 ## Rebuilding the index from scratch (optional)
 
-Only needed to regenerate the artifacts. Requires the corpus under
-`data/Wikipedia Entries/` (not committed to the repo). Run from the repo root:
+This is not needed to run the evaluation. The prebuilt artifacts above already
+cover that, and the grader never rebuilds; this section only documents how the
+artifacts were produced. It requires the original course corpus placed at
+data/Wikipedia Entries/, which is intentionally not included in this repo
+because the committed artifacts make it unnecessary. Run from the repo root:
 
 ```bash
 python scripts/build_index.py   # dense MiniLM index + memory-mapped text store
@@ -109,10 +112,9 @@ All three index over the same chunking, so they must be rebuilt together.
 
 ## Requirements
 
-Python 3.10 and the packages pinned in `requirements.txt`: PyTorch (CUDA 12.1
-build), `sentence-transformers`, `transformers`, `numpy`, `scipy`, and
-`faiss-cpu`. A CUDA-capable GPU is used for embedding and cross-encoder
-inference.
+Python 3.10 and the packages pinned in requirements.txt: PyTorch (CUDA 12.1
+build), sentence-transformers, transformers, numpy, scipy, and faiss-cpu. A
+CUDA-capable GPU is used for embedding and cross-encoder inference.
 
 ## Authors
 
