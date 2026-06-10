@@ -38,7 +38,7 @@ from bm25 import BM25
 from bm25_chunks import ChunkBM25
 from build_bm25 import tokenize
 
-POOL_PAGES = 100          # candidates kept after fusion; NDCG flat 70..150, 100 keeps a recall margin
+POOL_PAGES = 50         # candidates kept after fusion; NDCG flat 70..150
 RETRIEVE_DEPTH = 500      # how deep each retriever's ranking is read before fusion
 RRF_K = 60                # reciprocal-rank-fusion damping constant
 RERANK_MODEL = "cross-encoder/ms-marco-MiniLM-L-12-v2"
