@@ -5,6 +5,11 @@ natural-language query, run() returns the 10 most relevant page IDs. The system
 is evaluated by mean NDCG@10 over a set of hidden queries, under a 60-second
 budget for one batched call on the evaluation GPU (Tesla M60).
 
+## Video presentation
+
+- [3-minute video presentation](https://drive.google.com/file/d/1pMGqqcj-EY0dH4NwpKzwPS6Epw0TEl9C/view?usp=sharing)
+- [Presentation slides (PDF)](https://drive.google.com/file/d/1-NeXx10HVNnpHAQDfaR-EQhzNXkeEGQJ/view?usp=sharing)
+
 ## Approach
 
 A three-stage pipeline, arrived at empirically (dense retrieval alone plateaued
